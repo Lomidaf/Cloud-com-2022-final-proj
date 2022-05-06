@@ -55,6 +55,14 @@ class AuthStore {
     if (this.user) return true;
     return false;
   }
+
+  async getAuthHeader() {
+    const token = await this.user?.getIdToken()
+    return new Headers({
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    })
+  }
 }
 
 type userProfileInput = {
