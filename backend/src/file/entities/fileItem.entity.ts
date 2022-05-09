@@ -1,7 +1,7 @@
 import { Donation } from "src/donation/entities/donation.entity";
 import { Fundraiser } from "src/fundraiser/entities/fundraiser.entity";
 import { User } from "src/user/entities/user.entity";
-import { Column, Entity, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 @Entity()
 export class FileItem {
   @PrimaryGeneratedColumn('uuid')
@@ -16,6 +16,8 @@ export class FileItem {
   @Column()
   path: string;
 
+  @CreateDateColumn()
+  createdAt: Date;
   // @OneToOne(() => Donation)
   // donation: Donation;
 

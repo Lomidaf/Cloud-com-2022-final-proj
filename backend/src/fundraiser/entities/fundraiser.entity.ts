@@ -1,7 +1,7 @@
 import { Donation } from 'src/donation/entities/donation.entity';
 import { FileItem } from 'src/file/entities/fileItem.entity';
 import { User } from 'src/user/entities/user.entity';
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany, CreateDateColumn } from 'typeorm';
 
 @Entity()
 export class Fundraiser {
@@ -28,6 +28,9 @@ export class Fundraiser {
 
   @Column({ nullable: false })
   accountCompany: string;
+
+  @CreateDateColumn()
+  createdAt: Date;
 
   @ManyToOne( () => User, user => user.fundraisers)
   owner: User;

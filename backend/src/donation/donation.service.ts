@@ -6,6 +6,7 @@ import { Donation } from './entities/donation.entity';
 import { ImageAnnotatorClient } from '@google-cloud/vision';
 import { UserService } from 'src/user/user.service';
 import { ConfigService } from '@nestjs/config';
+import { NotificationService } from 'src/notification/notification.service';
 
 @Injectable()
 export class DonationService {
@@ -13,6 +14,7 @@ export class DonationService {
         @InjectRepository(Donation) private DonationRepository: Repository<Donation>,
         private userService: UserService,
         private configService: ConfigService,
+        private notificationService: NotificationService,
     ) {}
 
     async createDonation(ownerId: string, createDonationDto: CreateDonationDto) {
@@ -43,13 +45,16 @@ export class DonationService {
             description = await this.getDescription(company.description, text);
         }     
 
-        const donation = {
+        const newDonation = {
             ...description,
             ...createDonationDto,
             owner:owner,
         };
-        const newDonation = await this.DonationRepository.create(donation);
-        return this.DonationRepository.save(newDonation);    
+        const donation = await this.DonationRepository.create(newDonation);
+        const out = await this.DonationRepository.save(donation); 
+        const noticeDesc = `Donation`
+        this.notificationService.createNotification(noticeDesc, owner, out);
+        return out;                
     }
 
     async getDescription(company: string, text: string) {

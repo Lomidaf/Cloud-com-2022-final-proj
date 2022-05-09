@@ -18,4 +18,11 @@ export class UserService {
         const user = this.repositoryUser.create({id: id});
         return this.repositoryUser.save(user);
     } 
+
+    async getNotice(id: string) {
+        return this.repositoryUser.find({
+            where: {id: id},
+            relations: ["notifications"]
+        });
+    }
 }

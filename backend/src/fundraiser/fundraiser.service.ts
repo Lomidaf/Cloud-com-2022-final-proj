@@ -42,4 +42,11 @@ export class FundraiserService {
             ...updateFundraiser
         });
     }
+
+    async findDonation(id:string) {
+        return this.fundraiserRepository.find({
+            where:{id: id},
+            relations: ['donations']
+        })
+    }
 }
