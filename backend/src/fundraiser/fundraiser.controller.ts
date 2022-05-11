@@ -36,4 +36,10 @@ export class FundraiserController {
         const ownerId = request.user.uid;
         return await this.service.updateFundraiser(id, updateFundraiserDto, ownerId);
     }
+
+    @Get(':id/donation')
+    @UseGuards(FirebaseAuthGuard)
+    async findDonation(@Param('id') id: string) {
+        return await this.service.findDonation(id);
+    }
 }

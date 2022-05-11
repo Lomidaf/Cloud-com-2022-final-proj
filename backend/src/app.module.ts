@@ -12,8 +12,8 @@ import { FileModule } from './file/file.module';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { FirebaseAuthStrategy } from './auth/strategies/firebase-auth.strategy';
-import { AuthController } from './auth/auth.controller';
 import { DonationModule } from './donation/donation.module';
+import { NotificationModule } from './notification/notification.module';
 
 @Module({
   imports: [
@@ -33,8 +33,9 @@ import { DonationModule } from './donation/donation.module';
     UserModule,
     AuthModule,
     DonationModule,
+    NotificationModule,
   ],
-  controllers: [AppController, FundraiserController, FileController, AuthController],
+  controllers: [AppController, FundraiserController, FileController],
   providers: [AppService, FirebaseAuthStrategy],
 })
 export class AppModule {}
