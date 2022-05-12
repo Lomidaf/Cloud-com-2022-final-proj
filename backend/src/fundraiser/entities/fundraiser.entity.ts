@@ -9,7 +9,7 @@ export class Fundraiser {
   id: string;
 
   @Column({ nullable: false })
-  name: string;
+  title: string;
 
   @Column({ nullable: false })
   type: string;
@@ -19,6 +19,9 @@ export class Fundraiser {
 
   @Column({ nullable: false })
   goal: number;
+
+  @Column({ default: 0})
+  currentAmount: number;
 
   @Column({ nullable: false })
   bankAccount: string;

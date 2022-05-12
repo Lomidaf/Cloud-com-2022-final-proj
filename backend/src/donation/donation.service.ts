@@ -7,6 +7,8 @@ import { ImageAnnotatorClient } from '@google-cloud/vision';
 import { UserService } from 'src/user/user.service';
 import { ConfigService } from '@nestjs/config';
 import { NotificationService } from 'src/notification/notification.service';
+import { FundraiserService } from 'src/fundraiser/fundraiser.service';
+import { SlipVision } from './slip-vision';
 
 @Injectable()
 export class DonationService {
@@ -15,43 +17,27 @@ export class DonationService {
         private userService: UserService,
         private configService: ConfigService,
         private notificationService: NotificationService,
+        private fundraiserService: FundraiserService,
+        private slipVision: SlipVision,
     ) {}
 
     async createDonation(ownerId: string, createDonationDto: CreateDonationDto) {
-        let owner = await this.userService.findOne(ownerId);
-        if (!owner) {
-            owner = await this.userService.create(ownerId)
-        }
-        const keyPath = this.configService.get<string>('vision.keyPath')
-        const client = new ImageAnnotatorClient({keyFilename: keyPath});
+        const owner = await this.userService.findOne(ownerId);
         const filepath = './uploads/' + createDonationDto.receipt.title;
-        const [result] = await client.annotateImage({
-            image: {
-                source: { filename: filepath},
-            },
-            features: [
-                {
-                    type: 'LOGO_DETECTION',
-                },
-                {
-                    type: 'TEXT_DETECTION'
-                }
-            ]
-        })
+        const result = await this.slipVision.label(filepath);
         const company = result.logoAnnotations[0];
         const text = result.fullTextAnnotation.text;
-        let description;        
-        if (company && text) {
-            description = await this.getDescription(company.description, text);
-        }     
+        const description = (company && text) ? await this.getDescription(company.description, text) : {};   
 
         const newDonation = {
             ...description,
             ...createDonationDto,
             owner:owner,
         };
+        
         const donation = await this.DonationRepository.create(newDonation);
         const out = await this.DonationRepository.save(donation); 
+        await this.fundraiserService.updateAmount(createDonationDto.amount, createDonationDto.fundraiser.id);
         const noticeDesc = `Donation`
         this.notificationService.createNotification(noticeDesc, owner, out);
         return out;                

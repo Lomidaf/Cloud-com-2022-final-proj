@@ -6,7 +6,7 @@ export class UpdateFundraiserDto {
   type: string;
 
   @IsOptional()
-  name: string;
+  title: string;
 
   @IsOptional()
   goal: number;

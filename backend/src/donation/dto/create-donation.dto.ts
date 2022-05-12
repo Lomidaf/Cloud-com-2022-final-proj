@@ -9,6 +9,15 @@ export class CreateDonationDto {
   
     @IsOptional()
     description: string;
+
+    @IsOptional()
+    accountName: string;
+
+    @IsOptional()
+    accountCompany: string;
+
+    @IsOptional()
+    date: string;
   
     @IsNotEmpty()
     receipt: FileItem;
