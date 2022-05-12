@@ -9,6 +9,7 @@ import { ConfigService } from '@nestjs/config';
 import { NotificationService } from 'src/notification/notification.service';
 import { FundraiserService } from 'src/fundraiser/fundraiser.service';
 import { SlipVision } from './slip-vision';
+import { LabelDto } from './dto/label.dto';
 
 @Injectable()
 export class DonationService {
@@ -23,14 +24,9 @@ export class DonationService {
 
     async createDonation(ownerId: string, createDonationDto: CreateDonationDto) {
         const owner = await this.userService.findOne(ownerId);
-        const filepath = './uploads/' + createDonationDto.receipt.title;
-        const result = await this.slipVision.label(filepath);
-        const company = result.logoAnnotations[0];
-        const text = result.fullTextAnnotation.text;
-        const description = (company && text) ? await this.getDescription(company.description, text) : {};   
+           
 
         const newDonation = {
-            ...description,
             ...createDonationDto,
             owner:owner,
         };
@@ -41,6 +37,15 @@ export class DonationService {
         const noticeDesc = `Donation`
         this.notificationService.createNotification(noticeDesc, owner, out);
         return out;                
+    }
+
+    async imageLabel(fileItem: LabelDto) {
+        const filepath = './uploads/' + fileItem.receipt.title;
+        const result = await this.slipVision.label(filepath);
+        const company = result.logoAnnotations[0];
+        const text = result.fullTextAnnotation.text;
+        const description = (company && text) ? await this.getDescription(company.description, text) : {};
+        return description;
     }
 
     async getDescription(company: string, text: string) {
