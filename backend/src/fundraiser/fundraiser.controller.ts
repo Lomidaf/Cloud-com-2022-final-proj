@@ -14,7 +14,6 @@ export class FundraiserController {
     }
 
     @Get(':id')
-    @UseGuards(FirebaseAuthGuard)
     async findOne(@Param('id') id: string) {
         return await this.service.findOne(id);
     }

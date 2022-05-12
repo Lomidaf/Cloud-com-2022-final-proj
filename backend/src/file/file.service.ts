@@ -14,10 +14,7 @@ export class FileService {
 
     async createFile(@UploadedFile() file, dto: createFile, @Req() req){
         const id = req.user.uid;
-        let user = await this.userService.findOne(id);
-        if (!user) {
-            user = await this.userService.create(id);
-        }        
+        const user = await this.userService.findOne(id);
         const fileItem = {
             title: dto.title ? dto.title : file.filename,
             type: file.mimetype,

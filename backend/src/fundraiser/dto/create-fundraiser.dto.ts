@@ -6,7 +6,7 @@ export class CreateFundraiserDto {
   type: string;
 
   @IsNotEmpty()
-  name: string;
+  title: string;
 
   @IsNotEmpty()
   goal: number;

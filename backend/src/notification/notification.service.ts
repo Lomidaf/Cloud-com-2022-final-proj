@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Donation } from 'src/donation/entities/donation.entity';
 import { User } from 'src/user/entities/user.entity';
+import { UserService } from 'src/user/user.service';
 import { Repository } from 'typeorm';
 import { Notice } from './entities/notification.entity';
 
@@ -24,5 +25,19 @@ export class NotificationService {
 
     async findOne(id: string): Promise<Notice> {
         return this.noticeRepository.findOne(id);
+    }
+
+    async readAll(ownerId: string): Promise<Notice[]> {
+        let notifications = await this.noticeRepository.find({
+            where: {
+                owner: {id: ownerId},
+                isRead: false,
+            },
+            relations: ['owner'],
+        })
+        for(let notification of notifications) {
+            notification.isRead = true;
+        }        
+        return await this.noticeRepository.save(notifications);
     }
 }
