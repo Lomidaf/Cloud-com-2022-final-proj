@@ -21,7 +21,7 @@ export class FileService {
         const fileItem = {
             title: dto.title ? dto.title : file.filename,
             type: file.mimetype,
-            path: `${req.protocol}://${req.headers.host}/api/files/${file.filename}`,
+            path: `${req.protocol}://${req.headers.host}/api/file/${file.filename}`,
             owner: user
         }
         return this.repositoryFileItem.save(fileItem);
