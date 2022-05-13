@@ -84,7 +84,7 @@ export class FundraiserService {
     async findDonation(id:string) {
         return this.fundraiserRepository.find({
             where:{id: id},
-            relations: ['donations']
+            relations: ['donations', 'donations.receipt']
         })
     }
 

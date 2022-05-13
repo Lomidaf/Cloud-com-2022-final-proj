@@ -23,8 +23,9 @@ export class DonationService {
     ) {}
 
     async createDonation(ownerId: string, createDonationDto: CreateDonationDto) {
-        const owner = await this.userService.findOne(ownerId);
-           
+
+        const owner = await this.userService.findOne(ownerId);     
+        const donateTo = createDonationDto.fundraiser.owner;
 
         const newDonation = {
             ...createDonationDto,
@@ -35,7 +36,7 @@ export class DonationService {
         const out = await this.DonationRepository.save(donation); 
         await this.fundraiserService.updateAmount(createDonationDto.amount, createDonationDto.fundraiser.id);
         const noticeDesc = `Donation`
-        this.notificationService.createNotification(noticeDesc, owner, out);
+        this.notificationService.createNotification(noticeDesc, donateTo, out);
         return out;                
     }
 
