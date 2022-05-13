@@ -13,13 +13,13 @@ export class Donation {
   @Column({nullable: false })
   amount: number;
 
-  @Column({ nullable: true })
+  @Column()
   accountName: string;
 
-  @Column({ nullable: true })
+  @Column()
   accountCompany: string;
 
-  @Column({ nullable: true })
+  @Column()
   date: string;
 
   @CreateDateColumn()

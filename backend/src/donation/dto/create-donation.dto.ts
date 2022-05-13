@@ -10,13 +10,13 @@ export class CreateDonationDto {
     @IsOptional()
     description: string;
 
-    @IsOptional()
+    @IsNotEmpty()
     accountName: string;
 
-    @IsOptional()
+    @IsNotEmpty()
     accountCompany: string;
 
-    @IsOptional()
+    @IsNotEmpty()
     date: string;
   
     @IsNotEmpty()

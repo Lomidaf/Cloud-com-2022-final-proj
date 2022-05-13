@@ -1,8 +1,11 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { count } from 'console';
+import { Donation } from 'src/donation/entities/donation.entity';
+import { FileItem } from 'src/file/entities/fileItem.entity';
 import { User } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/user.service';
-import { Repository } from 'typeorm';
+import { createQueryBuilder, Repository } from 'typeorm';
 import { CreateFundraiserDto } from './dto/create-fundraiser.dto';
 import { UpdateFundraiserDto } from './dto/update-fundraiser.dto';
 import { Fundraiser } from './entities/fundraiser.entity';
@@ -14,11 +17,49 @@ export class FundraiserService {
         private readonly userService: UserService,
     ) {}
     async findAll() {
-        return this.fundraiserRepository.find({relations: ['owner', 'image']});
+        const date = new Date();
+        date.setHours(0, 0, 0, 0);
+        const recent = await this.fundraiserRepository.createQueryBuilder('fundraiser')
+        .addSelect('COUNT(donations)')
+        .leftJoin('fundraiser.donations', 'donations', 'donations.createdAt >= :today', { today: date})
+        .groupBy('fundraiser.id')
+        .getRawMany()
+
+        const fundraiser = await this.fundraiserRepository.createQueryBuilder('fundraiser')
+        .addSelect("COUNT(donations)", "donation_count")
+        .leftJoinAndSelect('fundraiser.owner', 'owner')
+        .leftJoinAndSelect('fundraiser.image', 'image')
+        .leftJoin('fundraiser.donations', 'donations')
+        .groupBy('fundraiser.id')
+        .addGroupBy('owner.id')
+        .addGroupBy('image.id')
+        .getRawMany()
+
+        return {recent: recent, fundraiser: fundraiser}
+
     }
 
     async findOne(id: string) {
-        return this.fundraiserRepository.findOne(id, {relations: ['owner', 'image']});
+        const date = new Date();
+        date.setHours(0, 0, 0, 0);
+        const recent = await this.fundraiserRepository.createQueryBuilder('fundraiser')
+        .select('COUNT(donations)')
+        .leftJoin('fundraiser.donations', 'donations', 'donations.createdAt >= :today', { today: date})
+        .where('fundraiser.id = :id',{id})
+        .getRawOne()
+
+        const fundraiser = await this.fundraiserRepository.createQueryBuilder('fundraiser')
+        .addSelect("COUNT(donations)", "donation_count")
+        .leftJoinAndSelect('fundraiser.owner', 'owner')
+        .leftJoinAndSelect('fundraiser.image', 'image')
+        .leftJoin('fundraiser.donations', 'donations')
+        .where('fundraiser.id = :id',{id})
+        .groupBy('fundraiser.id')
+        .addGroupBy('owner.id')
+        .addGroupBy('image.id')
+        .getRawOne()
+
+        return {recent: recent, fundraiser: fundraiser}
     }
 
     async createFundraiser(ownerId: string, createFundraiser: CreateFundraiserDto) {
