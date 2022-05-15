@@ -28,7 +28,24 @@ const RegisterPage: NextPage = () => {
         birthDate: values.birthDate,
         intro: values.intro,
       });
-      router.push("/")
+      const payload = {
+        email: values.email,
+        name: values.name,
+        gender: values.gender,
+        birthDate: values.birthDate.toString(),
+        intro: values.intro,
+      };
+      const result = await fetch(
+        (process.env.NEXT_BACKEND_URL || "http://localhost:8000") +
+          "/api/user/register",
+        {
+          method: "post",
+          headers: await AuthStore.getAuthHeader(),
+          body: JSON.stringify(payload),
+        }
+      );
+      console.log(result);
+      router.push("/");
     } catch (err: any) {
       console.log(getRefinedFirebaseAuthErrorMessage(err.message));
       setError(getRefinedFirebaseAuthErrorMessage(err.message));
@@ -115,7 +132,11 @@ const RegisterPage: NextPage = () => {
             <Button type="primary" htmlType="submit">
               Register
             </Button>
-            {error && <Typography.Text type="danger" style={{paddingLeft:"10px"}}>{error}</Typography.Text>}
+            {error && (
+              <Typography.Text type="danger" style={{ paddingLeft: "10px" }}>
+                {error}
+              </Typography.Text>
+            )}
           </Form.Item>
         </Form>
       </Col>

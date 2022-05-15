@@ -6,7 +6,7 @@ const LoginRedirect = () => {
   const route = useRouter();
 
   useEffect(() => {
-    route.push('login')
+    route.push('/login')
   }, []);
 
   return (

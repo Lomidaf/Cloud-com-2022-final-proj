@@ -2,57 +2,90 @@ import { Card, Col, Progress, Row, Space, Typography } from "antd";
 import { RiseOutlined } from "@ant-design/icons";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import AuthStore from "../../../mobx/AuthStore"
+import LoadingSpinner from "../../../components/LoadingSpinner";
+import { useWindowSize } from "../../../utils/react";
 
-const fundraisingItems = [
-  {
-    fundraisingSrc:
-      "https://static.lag.vn/upload/news/22/04/07/spy-x-family-anya-forger-la-ai-1_UMOI.jpg?w=800&encoder=wic&subsampling=444",
-    fundraisingTitle: "Anya 1",
-    fundraisingDescription:
-      "HELLO THE THIS IS TEMP DESCRIPTION FOR MOCKING DONT YOU CARE ABOUT THIS",
-    fundraisingRaise: 100,
-    fundraisingGoal: 180,
-    fundraisingUid: "1",
-    fundraisingRecentDonateCount: 0,
-  },
-  {
-    fundraisingSrc:
-      "https://static.lag.vn/upload/news/22/04/07/spy-x-family-anya-forger-la-ai-1_UMOI.jpg?w=800&encoder=wic&subsampling=444",
-    fundraisingTitle: "Anya 2",
-    fundraisingDescription:
-      "HELLO THE THIS IS TEMP DESCRIPTION FOR MOCKING DONT YOU CARE ABOUT THIS",
-    fundraisingRaise: 120,
-    fundraisingGoal: 180,
-    fundraisingUid: "2",
-    fundraisingRecentDonateCount: 2,
-  },
-  {
-    fundraisingSrc:
-      "https://static.lag.vn/upload/news/22/04/07/spy-x-family-anya-forger-la-ai-1_UMOI.jpg?w=800&encoder=wic&subsampling=444",
-    fundraisingTitle: "Anya 3",
-    fundraisingDescription:
-      "HELLO THE THIS IS TEMP DESCRIPTION FOR MOCKING DONT YOU CARE ABOUT THIS",
-    fundraisingRaise: 100,
-    fundraisingGoal: 400,
-    fundraisingUid: "3",
-    fundraisingRecentDonateCount: 3,
-  },
-  {
-    fundraisingSrc:
-      "https://static.lag.vn/upload/news/22/04/07/spy-x-family-anya-forger-la-ai-1_UMOI.jpg?w=800&encoder=wic&subsampling=444",
-    fundraisingTitle: "Anya 4",
-    fundraisingDescription:
-      "HELLO THE THIS IS TEMP DESCRIPTION FOR MOCKING DONT YOU CARE ABOUT THIS",
-    fundraisingRaise: 500,
-    fundraisingGoal: 180,
-    fundraisingUid: "4",
-    fundraisingRecentDonateCount: 1,
-  },
-];
+// const fundraisingItems = [
+//   {
+//     fundraisingSrc:
+//       "https://static.lag.vn/upload/news/22/04/07/spy-x-family-anya-forger-la-ai-1_UMOI.jpg?w=800&encoder=wic&subsampling=444",
+//     fundraisingTitle: "Anya 1",
+//     fundraisingDescription:
+//       "HELLO THE THIS IS TEMP DESCRIPTION FOR MOCKING DONT YOU CARE ABOUT THIS",
+//     fundraisingRaise: 100,
+//     fundraisingGoal: 180,
+//     fundraisingUid: "1",
+//     fundraisingRecentDonateCount: 0,
+//   },
+//   {
+//     fundraisingSrc:
+//       "https://static.lag.vn/upload/news/22/04/07/spy-x-family-anya-forger-la-ai-1_UMOI.jpg?w=800&encoder=wic&subsampling=444",
+//     fundraisingTitle: "Anya 2",
+//     fundraisingDescription:
+//       "HELLO THE THIS IS TEMP DESCRIPTION FOR MOCKING DONT YOU CARE ABOUT THIS",
+//     fundraisingRaise: 120,
+//     fundraisingGoal: 180,
+//     fundraisingUid: "2",
+//     fundraisingRecentDonateCount: 2,
+//   },
+//   {
+//     fundraisingSrc:
+//       "https://static.lag.vn/upload/news/22/04/07/spy-x-family-anya-forger-la-ai-1_UMOI.jpg?w=800&encoder=wic&subsampling=444",
+//     fundraisingTitle: "Anya 3",
+//     fundraisingDescription:
+//       "HELLO THE THIS IS TEMP DESCRIPTION FOR MOCKING DONT YOU CARE ABOUT THIS",
+//     fundraisingRaise: 100,
+//     fundraisingGoal: 400,
+//     fundraisingUid: "3",
+//     fundraisingRecentDonateCount: 3,
+//   },
+//   {
+//     fundraisingSrc:
+//       "https://static.lag.vn/upload/news/22/04/07/spy-x-family-anya-forger-la-ai-1_UMOI.jpg?w=800&encoder=wic&subsampling=444",
+//     fundraisingTitle: "Anya 4",
+//     fundraisingDescription:
+//       "HELLO THE THIS IS TEMP DESCRIPTION FOR MOCKING DONT YOU CARE ABOUT THIS",
+//     fundraisingRaise: 500,
+//     fundraisingGoal: 180,
+//     fundraisingUid: "4",
+//     fundraisingRecentDonateCount: 1,
+//   },
+// ];
 
 const FoundraisingOwnerPage: NextPage = () => {
   const router = useRouter();
-  const rowSize = 3;
+  const size = useWindowSize();
+  const [rowSize, setRowSize] = useState(3);
+  const [fundraisingItems, setFundraisingItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setLoading(true);
+    AuthStore.getAuthHeader().then((header) =>{
+      fetch(
+        (process.env.NEXT_BACKEND_URL || "http://localhost:8000") +
+          "/api/user/fundraiser",
+        {
+          method: "get",
+          headers: header,
+        }
+      )
+        .then((res) => res.json())
+        .then((data) => {
+          // console.log(data['fundraiser'])
+          setFundraisingItems(data['fundraiser']);
+          setLoading(false);
+        });
+    })
+  }, []);
+
+  useEffect(() => {
+    const newRowSize = Math.max(1,Math.floor(size.width/400))
+    setRowSize(newRowSize)
+  }, [size])
+
   return (
     <Row
       justify="center"
@@ -62,7 +95,9 @@ const FoundraisingOwnerPage: NextPage = () => {
         <Typography.Title level={3} style={{ margin: "0 0 20px 0" }}>
           Your Fundraising
         </Typography.Title>
-        {Array.from(
+        {loading ? (
+          <LoadingSpinner />
+        ) :Array.from(
           Array(Math.ceil(fundraisingItems.length / rowSize)).keys()
         ).map((chunkIndex) => {
           return (
@@ -80,12 +115,12 @@ const FoundraisingOwnerPage: NextPage = () => {
                         marginTop: chunkIndex == 0 ? "0px" : "30px",
                       }}
                       onClick={() =>
-                        router.push(`owner/${item.fundraisingUid}`)
+                        router.push(`owner/${item.fundraiser_id}`)
                       }
                       cover={
                         <img
                           alt="fundraising"
-                          src={item.fundraisingSrc}
+                          src={item.image_path}
                           style={{
                             width: "350px",
                             height: "194.4px",
@@ -93,7 +128,7 @@ const FoundraisingOwnerPage: NextPage = () => {
                         />
                       }
                     >
-                      <Card.Meta title={item.fundraisingTitle} />
+                      <Card.Meta title={item.fundraiser_title} />
                       <Typography.Paragraph
                         ellipsis={{
                           rows: 2,
@@ -103,9 +138,10 @@ const FoundraisingOwnerPage: NextPage = () => {
                         style={{
                           color: "rgba(0, 0, 0, 0.45)",
                           marginTop: "10px",
+                          height:"44px",
                         }}
                       >
-                        {item.fundraisingDescription}
+                        {item.fundraiser_description}
                       </Typography.Paragraph>
                         <Space
                           direction="horizontal"
@@ -115,27 +151,27 @@ const FoundraisingOwnerPage: NextPage = () => {
                             height: "25px",
                           }}
                         >
-                          {item.fundraisingRecentDonateCount > 0 && (<>
+                          {parseInt(item.donation_count) > 0 && (<>
                           <RiseOutlined style={{ color: "blue" }} />
                           <Typography.Text strong>
-                            {item.fundraisingRecentDonateCount +
-                              " people recently donated"}
+                            {parseInt(item.donation_count)/2 +
+                              " people have donated"}
                           </Typography.Text>
                           </>
                           )}
                         </Space>
                       <Progress
                         percent={Math.floor(
-                          (item.fundraisingRaise / item.fundraisingGoal) * 100
+                          (item.fundraiser_currentAmount / item.fundraiser_goal) * 100
                         )}
                         showInfo={false}
                         style={{ marginTop: "10px" }}
                       />
                       <Typography.Text strong style={{ fontSize: "18px" }}>
-                        {"฿" + item.fundraisingRaise + " raised"}
+                        {"฿" + item.fundraiser_currentAmount + " raised"}
                       </Typography.Text>
                       <Typography.Text style={{ marginLeft: "0px" }}>
-                        {" of ฿" + item.fundraisingGoal + " goal"}
+                        {" of ฿" + item.fundraiser_goal + " goal"}
                       </Typography.Text>
                     </Card>
                   );

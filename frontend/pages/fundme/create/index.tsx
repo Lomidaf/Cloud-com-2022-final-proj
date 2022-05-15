@@ -14,8 +14,10 @@ import {
 } from "antd";
 import withAuth from "../../../components/WithAuth";
 import { UploadOutlined } from "@ant-design/icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ImgCrop from "antd-img-crop";
+import AuthStore from "../../../mobx/AuthStore";
+import { useRouter } from "next/router";
 
 const fundraisingTypes = [
   "Accidents & Emergencies",
@@ -40,23 +42,68 @@ const fundraisingTypes = [
 
 const CreateFundMePage: NextPage = () => {
   const [fileList, setFileList]: any[] = useState([]);
+  const [idToken, setIdToken] = useState("");
+  const router = useRouter();
+  useEffect(() => {
+    AuthStore.user?.getIdToken().then((token) => {
+      setIdToken(token)
+    })
+  }, []);
 
   const onFinish = async (values: any) => {
-    console.log("Received values of form: ", values);
+    const payload = {
+      type: values.type,
+      title: values.fundraisingTitle,
+      goal: values.raise,
+      bankAccount: values.accountNumber,
+      accountOwner: `${values.ownerFirstname} ${values.ownerLastname}`,
+      accountCompany: values.bankName,
+      description: values.description,
+      image: fileList.length>0 ? fileList[0].response : undefined,
+    };
+    // console.log(payload);
+    const result = await fetch(
+      (process.env.NEXT_BACKEND_URL || "http://localhost:8000") +
+        "/api/fundraiser",
+      {
+        method: "POST",
+        headers: await AuthStore.getAuthHeader(),
+        body: JSON.stringify(payload),
+      }
+    );
+    // console.log(result.json());
+    router.push("/fundme/owner");
   };
 
-  const uploadProps = {
-    onRemove: (file: any) => {
-      const index = fileList.indexOf(file);
-      const newFileList = fileList.slice();
-      newFileList.splice(index, 1);
-      setFileList(newFileList);
-    },
-    beforeUpload: (file: any) => {
-      setFileList([file]);
-      return false;
+  const uploadBackendProps = {
+    name: "file",
+    action:
+      (process.env.NEXT_BACKEND_URL || "http://localhost:8000") +
+      "/api/file/Upload",
+    headers: {
+      Authorization: `Bearer ${idToken}`,
     },
     fileList,
+    beforeUpload: async(file: any) => {
+      AuthStore.user?.getIdToken().then((token) => {
+        setIdToken(token)
+      })
+      return file;
+    },
+    onChange(info: any) {
+      if (info.file.status !== "uploading") {
+        // console.log(idToken);
+        // console.log(info.file, info.fileList);
+      }
+      if (info.file.status === "done") {
+        // console.log(`${info.file.name} file uploaded successfully`);
+        setFileList([info.file])
+        return
+      } else if (info.file.status === "error") {
+        // console.log(`${info.file.name} file upload failed.`);
+      }
+      setFileList(info.fileList);
+    },
   };
 
   return (
@@ -107,10 +154,10 @@ const CreateFundMePage: NextPage = () => {
             rules={[{ required: true }]}
             name={"fundraisingTitle"}
           >
-            <Input/>
+            <Input />
           </Form.Item>
           <Form.Item
-            name="gender"
+            name="type"
             label="Your Fundraising Type"
             rules={[
               {
@@ -150,14 +197,14 @@ const CreateFundMePage: NextPage = () => {
           {/* Example: https://codesandbox.io/s/x724lxyl24 */}
           <Form.Item name={"fundraisingImage"} label="Fundraising image">
             <ImgCrop aspect={1.8}>
-              <Upload {...uploadProps}>
+              <Upload {...uploadBackendProps}>
                 <Button icon={<UploadOutlined />}>Upload</Button>
               </Upload>
             </ImgCrop>
           </Form.Item>
           {fileList.length > 0 && (
             <Form.Item label="Preview Image">
-              <Image src={URL.createObjectURL(fileList[0])} />
+              <Image src={fileList[0].response?.path} />
             </Form.Item>
           )}
           <Typography.Title level={3} style={{ margin: "0 0 20px 0" }}>
@@ -168,19 +215,16 @@ const CreateFundMePage: NextPage = () => {
             rules={[{ required: true }]}
             name={"bankName"}
           >
-            <Input style={{ width: "300px" }}/>
+            <Input style={{ width: "300px" }} />
           </Form.Item>
           <Form.Item
             label="Account Number"
             rules={[{ required: true }]}
             name={"accountNumber"}
           >
-            <Input style={{ width: "300px" }}/>
+            <Input style={{ width: "300px" }} />
           </Form.Item>
-          <Form.Item
-            label="Owner Name"
-            rules={[{ required: true }]}
-          >
+          <Form.Item label="Owner Name" rules={[{ required: true }]}>
             <Form.Item
               rules={[{ required: true }]}
               name={"ownerFirstname"}
@@ -210,7 +254,6 @@ const CreateFundMePage: NextPage = () => {
             >
               Create Fundraising
             </Button>
-            
           </Form.Item>
         </Form>
       </Col>

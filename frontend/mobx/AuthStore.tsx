@@ -27,7 +27,7 @@ class AuthStore {
     let updateData = Object.fromEntries(
       Object.entries(data).filter(([_, v]) => v != null)
     );
-    console.log(updateData);
+    // console.log(updateData);
     return updateProfile(auth.currentUser, updateData);
   }
 
