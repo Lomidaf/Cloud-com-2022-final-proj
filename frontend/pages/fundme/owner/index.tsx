@@ -65,7 +65,7 @@ const FoundraisingOwnerPage: NextPage = () => {
     setLoading(true);
     AuthStore.getAuthHeader().then((header) =>{
       fetch(
-        (process.env.NEXT_BACKEND_URL || "http://localhost:8000") +
+        (process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000") +
           "/api/user/fundraiser",
         {
           method: "get",
@@ -74,10 +74,13 @@ const FoundraisingOwnerPage: NextPage = () => {
       )
         .then((res) => res.json())
         .then((data) => {
-          // console.log(data['fundraiser'])
+          // console.log(data)
           setFundraisingItems(data['fundraiser']);
           setLoading(false);
         });
+    })
+    .catch((err) => {
+      console.log(err)
     })
   }, []);
 
@@ -154,7 +157,7 @@ const FoundraisingOwnerPage: NextPage = () => {
                           {parseInt(item.donation_count) > 0 && (<>
                           <RiseOutlined style={{ color: "blue" }} />
                           <Typography.Text strong>
-                            {parseInt(item.donation_count)/2 +
+                            {parseInt(item.donation_count)/3 +
                               " people have donated"}
                           </Typography.Text>
                           </>

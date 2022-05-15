@@ -36,7 +36,7 @@ const RegisterPage: NextPage = () => {
         intro: values.intro,
       };
       const result = await fetch(
-        (process.env.NEXT_BACKEND_URL || "http://localhost:8000") +
+        (process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000") +
           "/api/user/register",
         {
           method: "post",

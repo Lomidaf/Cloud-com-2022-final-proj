@@ -64,7 +64,7 @@ const EditFundMePage: NextPage = () => {
   useEffect(() => {
     setLoading(true);
     fetch(
-      (process.env.NEXT_BACKEND_URL || "http://localhost:8000") +
+      (process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000") +
         `/api/fundraiser/${uid}`,
       {
         method: "get",
@@ -106,7 +106,7 @@ const EditFundMePage: NextPage = () => {
       image: fileList.length>0 ? fileList[0].response : undefined,
     }
     const result = await fetch(
-      (process.env.NEXT_BACKEND_URL || "http://localhost:8000") +
+      (process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000") +
         `/api/fundraiser/${uid}`,
       {
         method: "PUT",
@@ -121,7 +121,7 @@ const EditFundMePage: NextPage = () => {
   const uploadProps = {
     name: "file",
     action:
-      (process.env.NEXT_BACKEND_URL || "http://localhost:8000") +
+      (process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000") +
       "/api/file/Upload",
     headers: {
       Authorization: `Bearer ${idToken}`,

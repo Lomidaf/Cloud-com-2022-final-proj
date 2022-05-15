@@ -88,7 +88,7 @@ const DonatePage: NextPage = () => {
       setIdToken(token);
     });
     fetch(
-      (process.env.NEXT_BACKEND_URL || "http://localhost:8000") +
+      (process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000") +
         `/api/fundraiser/${uid}`,
       {
         method: "get",
@@ -108,7 +108,7 @@ const DonatePage: NextPage = () => {
   const uploadProps = {
     name: "file",
     action:
-      (process.env.NEXT_BACKEND_URL || "http://localhost:8000") +
+      (process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000") +
       "/api/file/Upload",
     headers: {
       Authorization: `Bearer ${idToken}`,
@@ -131,7 +131,7 @@ const DonatePage: NextPage = () => {
         const payload = { receipt: info.file.response };
         console.log(payload);
         fetch(
-          (process.env.NEXT_BACKEND_URL || "http://localhost:8000") +
+          (process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000") +
             `/api/donation/label`,
           {
             method: "post",
@@ -184,7 +184,7 @@ const DonatePage: NextPage = () => {
     };
     // console.log(payload)
     const result = await fetch(
-      (process.env.NEXT_BACKEND_URL || "http://localhost:8000") +
+      (process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000") +
         "/api/donation",
       {
         method: "POST",

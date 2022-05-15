@@ -66,7 +66,7 @@ const PageLayout = ({ children }: PageLayoutProps) => {
     AuthStore.user?.getIdToken().then((token) => {
       if (token) {
         fetch(
-          (process.env.NEXT_BACKEND_URL || "http://localhost:8000") +
+          (process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000") +
             `/api/user/notification`,
           {
             method: "get",
@@ -125,7 +125,7 @@ const PageLayout = ({ children }: PageLayoutProps) => {
   const readNotification = () => {
     AuthStore.user?.getIdToken().then((token) => {
       fetch(
-        (process.env.NEXT_BACKEND_URL || "http://localhost:8000") +
+        (process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000") +
           `/api/notification/read-all`,
         {
           method: "put",

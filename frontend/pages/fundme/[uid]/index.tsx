@@ -36,7 +36,7 @@ const FoundraisingPage: NextPage = () => {
   useEffect(() => {
     setLoading(true);
     fetch(
-      (process.env.NEXT_BACKEND_URL || "http://localhost:8000") +
+      (process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000") +
         `/api/fundraiser/${uid}`,
       {
         method: "get",
