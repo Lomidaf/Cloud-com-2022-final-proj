@@ -252,6 +252,7 @@ const FoundraisingPage: NextPage = () => {
                       style={{ width: "100%", margin: "0 10px 0 0px" }}
                       size={0}
                       onClick={() => {
+                        setImagePreviewSrc(donation.receipt?.path)
                         setImagePreviewVisible(true)
                       }}
                     >
@@ -281,7 +282,7 @@ const FoundraisingPage: NextPage = () => {
             src={imagePreviewSrc}
             preview={{
               visible: imagePreviewVisible,
-              src: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+              src: imagePreviewSrc,
               onVisibleChange: value => {
                 setImagePreviewVisible(value);
               },
