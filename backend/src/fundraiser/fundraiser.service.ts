@@ -62,6 +62,11 @@ export class FundraiserService {
         return {recent: recent, fundraiser: fundraiser}
     }
 
+    async findOwner(id: string): Promise<User> {
+        return (await this.fundraiserRepository.findOne(id,
+            { relations: ['owner'] })).owner
+    }
+
     async createFundraiser(ownerId: string, createFundraiser: CreateFundraiserDto) {
         const owner = await this.userService.findOne(ownerId);
         const newFundraiser = {owner: owner, ...createFundraiser}

@@ -25,8 +25,7 @@ export class DonationService {
     async createDonation(ownerId: string, createDonationDto: CreateDonationDto) {
 
         const owner = await this.userService.findOne(ownerId);     
-        const donateTo = createDonationDto.fundraiser.owner;
-
+        const donateTo = await this.fundraiserService.findOwner(createDonationDto.fundraiser.id);
         const newDonation = {
             ...createDonationDto,
             owner:owner,
