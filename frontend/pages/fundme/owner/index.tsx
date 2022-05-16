@@ -157,7 +157,7 @@ const FoundraisingOwnerPage: NextPage = () => {
                           {parseInt(item.donation_count) > 0 && (<>
                           <RiseOutlined style={{ color: "blue" }} />
                           <Typography.Text strong>
-                            {parseInt(item.donation_count)/3 +
+                            {parseInt(item.donation_count) +
                               " people have donated"}
                           </Typography.Text>
                           </>
