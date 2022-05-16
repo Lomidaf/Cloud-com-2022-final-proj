@@ -79,7 +79,9 @@ const PageLayout = ({ children }: PageLayoutProps) => {
           .then((res) => res.json())
           .then((data) => {
             console.log(data);
-            const notifications = data["notifications"].filter((noti:any) => noti['isRead'] == false );
+            const notifications = data["notifications"].filter(
+              (noti: any) => noti["isRead"] == false
+            );
             for (let i = 0; i < notifications.length; i++) {
               moment.utc;
               notifications[i]["createdAt"] = moment(
@@ -180,27 +182,27 @@ const PageLayout = ({ children }: PageLayoutProps) => {
           selectedKeys={[routeToKey[router.asPath]]}
         >
           {!AuthStore.isLoading && (
-            <Menu.Item key="discover">
-              <span
-                onClick={() => {
-                  router.push("/fundme/");
-                }}
-              >
-                Discover
-              </span>
+            <Menu.Item
+              key="discover"
+              onClick={() => {
+                router.push("/fundme/");
+              }}
+            >
+              <span>Discover</span>
             </Menu.Item>
           )}
           {!AuthStore.isLoading &&
             (AuthStore.isLogin ? (
               <>
-                <Menu.Item key="create fundme">
-                  <span onClick={() => router.push("/fundme/create")}>
-                    Create Fundme
-                  </span>
+                <Menu.Item
+                  key="create fundme"
+                  onClick={() => router.push("/fundme/create")}
+                >
+                  <span>Create Fundme</span>
                 </Menu.Item>
                 <Menu.Item key="notification" style={{ marginLeft: "auto" }}>
                   <Dropdown
-                    disabled={notificationItems.length<=0}
+                    disabled={notificationItems.length <= 0}
                     overlay={notificationMenu}
                     arrow={{ pointAtCenter: true }}
                     placement="bottomLeft"
@@ -215,23 +217,21 @@ const PageLayout = ({ children }: PageLayoutProps) => {
                     </a>
                   </Dropdown>
                 </Menu.Item>
-                <Menu.Item key="my fundme">
-                  <span onClick={() => router.push("/fundme/owner")}>
-                    My Fundme
-                  </span>
+                <Menu.Item
+                  key="my fundme"
+                  onClick={() => router.push("/fundme/owner")}
+                >
+                  <span>My Fundme</span>
                 </Menu.Item>
                 <Menu.Item
                   key="logout"
                   // style={{ marginLeft: "auto" }}
+                  onClick={() => {
+                    AuthStore.logout();
+                    router.push("/");
+                  }}
                 >
-                  <span
-                    onClick={() => {
-                      AuthStore.logout();
-                      router.push("/");
-                    }}
-                  >
-                    Logout
-                  </span>
+                  <span>Logout</span>
                 </Menu.Item>
               </>
             ) : (
