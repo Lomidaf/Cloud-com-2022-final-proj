@@ -20,13 +20,13 @@ export class FundraiserService {
         const date = new Date();
         date.setHours(0, 0, 0, 0);
         const recent = await this.fundraiserRepository.createQueryBuilder('fundraiser')
-        .addSelect('COUNT(donations)')
+        .addSelect('COUNT(DISTINCT donations)')
         .leftJoin('fundraiser.donations', 'donations', 'donations.createdAt >= :today', { today: date})
         .groupBy('fundraiser.id')
         .getRawMany()
 
         const fundraiser = await this.fundraiserRepository.createQueryBuilder('fundraiser')
-        .addSelect("COUNT(donations)", "donation_count")
+        .addSelect("COUNT(DISTINCT donations)", "donation_count")
         .leftJoinAndSelect('fundraiser.owner', 'owner')
         .leftJoinAndSelect('fundraiser.image', 'image')
         .leftJoin('fundraiser.donations', 'donations')

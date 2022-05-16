@@ -37,7 +37,7 @@ export class UserService {
         date.setHours(0, 0, 0, 0);
         const recent = await createQueryBuilder('fundraiser')
         .select('fundraiser')
-        .addSelect('COUNT(donations)')
+        .addSelect('COUNT(DISTINCT donations)')
         .from(Fundraiser, 'fundraiser')
         .leftJoin('fundraiser.donations', 'donations', 'donations.createdAt >= :today', { today: date})
         .leftJoinAndSelect('fundraiser.owner', 'owner')
@@ -48,7 +48,7 @@ export class UserService {
 
         const fundraiser = await createQueryBuilder('fundraiser')
         .select('fundraiser')
-        .addSelect("COUNT(donations)", "donation_count")
+        .addSelect("COUNT(DISTINCT donations)", "donation_count")
         .from(Fundraiser, 'fundraiser')
         .leftJoinAndSelect('fundraiser.owner', 'owner')
         .leftJoinAndSelect('fundraiser.image', 'image')
