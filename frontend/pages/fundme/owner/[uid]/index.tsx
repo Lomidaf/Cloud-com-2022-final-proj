@@ -228,7 +228,7 @@ const FoundraisingPage: NextPage = () => {
               }}
               onClick={() => router.push(router.asPath + "/edit")}
             >
-              Edit Foundraising
+              Edit Fundraising
             </Button>
           </Col>
           <Modal
